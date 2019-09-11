@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Вадим](https://up.htmlacademy.ru/javascript/18/user/944575).
-* Наставник: [ЕкатеринаКащенко] (https://htmlacademy.ru/profile/id109008).
+* Наставник: [ЕкатеринаКащенко](https://htmlacademy.ru/profile/id109008).
 
 ---
 
