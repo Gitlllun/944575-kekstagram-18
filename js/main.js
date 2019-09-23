@@ -7,6 +7,7 @@ var LIKE_MAX = 200
 var POST_COMMENTS = ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
 var AVATAR_MIN = 1;
 var AVATAR_MAX = 6;
+var POST_NAMES = ['Артём', 'Маша', 'Игорь', 'Коля', 'Настя'];
 
 // Функция генерация массива с нужным количеством данных
 var createNumber = function (x, y) {
@@ -29,33 +30,24 @@ var createPost = function (number) {
   var post = [];
 
   var POST_LIKES = createNumber(LIKE_MIN, LIKE_MAX);
+  var POST_AVATARS = createNumber(AVATAR_MIN, AVATAR_MAX);
 
   for (var i = 1; i <= number; i++) {
     var urlPost = 'img/photos/' + i + '.jpg';
     var descriptionPost = getRandomElement(POST_DESCRIPTION);
     var likesPost = getRandomElement(POST_LIKES);
+    var j = getRandomElement(POST_AVATARS);
     var commentsPost = getRandomElement(POST_COMMENTS);
+    var namesPost = getRandomElement(POST_NAMES);
+    var avatarsPost = 'img/avatar-' + j + '.svg';
 
     post.push({
       url: urlPost,
       description: POST_DESCRIPTION[descriptionPost],
       likes: POST_LIKES[likesPost],
-      comments: POST_COMMENTS[commentsPost]
+      comments: avatarsPost + ' ' + POST_COMMENTS[commentsPost] + ' ' + POST_NAMES[namesPost]
     });
   }
 
   return post;
 };
-
-console.log(createPost(2));
-
-// ---------------------------------------------------------------
-
-var AVATAR = createNumber(AVATAR_MIN, AVATAR_MAX);
-// console.log(AVATAR);
-
-var random = getRandomElement(AVATAR);
-// console.log(random);
-
-var avatar = AVATAR[random];
-console.log(avatar);
