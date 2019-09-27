@@ -33,7 +33,7 @@ var createPost = function (number) {
   var POST_AVATARS = createNumber(AVATAR_MIN, AVATAR_MAX);
 
   for (var i = 1; i <= number; i++) {
-    var urlPost = 'img/photos/' + i + '.jpg';
+    var urlPost = 'photos/' + i + '.jpg';
     var descriptionPost = getRandomElement(POST_DESCRIPTION);
     var likesPost = getRandomElement(POST_LIKES);
     var randomAvatars = getRandomElement(POST_AVATARS);
@@ -60,11 +60,22 @@ var renderPicture = function (obj) {
   var picture = pictureTemplate.cloneNode(true);
 
   picture.querySelector('.picture__img').src = obj.url;
-  picture.querySelector('.picture__info').textContent = obj.description;
-  picture.querySelector('.picture_likes').textContent = obj.likes;
-  picture.quertSelector('.picture__comments').textContent = obj.comments;
+  picture.querySelector('.picture__likes').textContent = obj.likes;
+  picture.querySelector('.picture__comments').textContent = obj.comments.length;
 
   return picture;
 };
 
-// -------------------------
+var picturePost = document.querySelector('.pictures');
+
+var renderPost = function (post) {
+  var fragment = document.createDocumentFragment();
+
+  for (var i = 0; i < post.length; i++) {
+    fragment.appendChild(renderPicture(post[i]));
+  }
+
+  return picturePost.appendChild(fragment);
+};
+
+renderPost(createPost(NUMBER_POSTS));
