@@ -36,10 +36,10 @@ var createPost = function (number) {
     var urlPost = 'img/photos/' + i + '.jpg';
     var descriptionPost = getRandomElement(POST_DESCRIPTION);
     var likesPost = getRandomElement(POST_LIKES);
-    var j = getRandomElement(POST_AVATARS);
+    var randomAvatars = getRandomElement(POST_AVATARS);
     var commentsPost = getRandomElement(POST_COMMENTS);
     var namesPost = getRandomElement(POST_NAMES);
-    var avatarsPost = 'img/avatar-' + j + '.svg';
+    var avatarsPost = 'img/avatar-' + randomAvatars + '.svg';
 
     post.push({
       url: urlPost,
@@ -51,3 +51,20 @@ var createPost = function (number) {
 
   return post;
 };
+
+var pictureTemplate = document.querySelector('#picture')
+  .content
+  .querySelector('a');
+
+var renderPicture = function (obj) {
+  var picture = pictureTemplate.cloneNode(true);
+
+  picture.querySelector('.picture__img').src = obj.url;
+  picture.querySelector('.picture__info').textContent = obj.description;
+  picture.querySelector('.picture_likes').textContent = obj.likes;
+  picture.quertSelector('.picture__comments').textContent = obj.comments;
+
+  return picture;
+};
+
+// -------------------------
