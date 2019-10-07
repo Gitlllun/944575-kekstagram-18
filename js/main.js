@@ -45,7 +45,11 @@ var createPost = function (number) {
       url: urlPost,
       description: POST_DESCRIPTION[descriptionPost],
       likes: POST_LIKES[likesPost],
-      comments: avatarsPost + ' ' + POST_COMMENTS[commentsPost] + ' ' + POST_NAMES[namesPost]
+      comments: [{
+        avatar: avatarsPost,
+        message: getRandomElement(POST_COMMENTS[commentsPost]),
+        name: POST_NAMES[namesPost]
+      }]
     });
   }
 
@@ -79,3 +83,103 @@ var renderPost = function (post) {
 };
 
 renderPost(createPost(NUMBER_POSTS));
+
+// Начало работы с ТЗ
+
+var uploadFile = document.querySelector('#upload-file');
+var uploadOverlay = document.querySelector('.img-upload__overlay');
+var uploadClosed = uploadOverlay.querySelector('#upload-cancel');
+
+var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
+
+var onOverlayEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closeOverlay();
+  }
+};
+
+var openOverlay = function () {
+  uploadOverlay.classList.remove('hidden');
+  document.addEventListener('keydown', onOverlayEscPress);
+};
+
+var closeOverlay = function () {
+  uploadOverlay.classList.add('hidden');
+  document.removeEventListener('keydown', onOverlayEscPress);
+};
+
+// Открывает форму редактирования изображения
+uploadFile.addEventListener('change', function (evt) {
+  evt.preventDefault();
+
+  uploadFile.value = '';
+  controlValue.value = '100%';
+  imagePreview.style.transform = 'scale(1)';
+
+  openOverlay();
+});
+
+uploadFile.addEventListener('change', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    evt.preventDefault();
+    openOverlay();
+  }
+});
+
+// Закрывает форму редактирования изображения
+uploadClosed.addEventListener('click', function (evt) {
+  evt.preventDefault();
+
+  closeOverlay();
+});
+
+uploadClosed.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    evt.preventDefault();
+    closeOverlay();
+  }
+});
+
+// Переменные для масштабирования
+var SCALE_MAX = 100;
+var SCALE_MIN = 25;
+var SCALE_STEP = 25;
+var FLAG_MINUS = -1;
+var FLAG_PLUS = 1;
+
+var sectionPicture = document.querySelector('.pictures');
+var imagePreview = sectionPicture.querySelector('.img-upload__preview img');
+var scalePreview = sectionPicture.querySelector('.img-upload__scale');
+var controlSmaller = scalePreview.querySelector('.scale__control--smaller');
+var controlValue = scalePreview.querySelector('.scale__control--value');
+var controlBigger = scalePreview.querySelector('.scale__control--bigger');
+
+// Функция расчета масштабирования
+var getScale = function (number) {
+  var parseValue = parseFloat(controlValue.value);
+  var totalValue = parseValue + number * SCALE_STEP;
+
+  if (totalValue > SCALE_MAX) {
+    totalValue = SCALE_MAX;
+  } else if (totalValue < SCALE_MIN) {
+    totalValue = SCALE_MIN;
+  }
+
+  controlValue.value = totalValue + '%';
+  imagePreview.style.transform = 'scale(' + (totalValue / SCALE_MAX) + ')';
+};
+
+// Уменьшение масштаба
+controlSmaller.addEventListener('click', function (evt) {
+  evt.preventDefault();
+
+  getScale(FLAG_MINUS);
+});
+
+// Увеличение масштаба
+controlBigger.addEventListener('click', function (evt) {
+  evt.preventDefault();
+
+  getScale(FLAG_PLUS);
+});
