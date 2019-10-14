@@ -113,9 +113,12 @@ var closeOverlay = function () {
 uploadFile.addEventListener('change', function (evt) {
   evt.preventDefault();
 
+  document.querySelector('.img-upload__form').reset();
   uploadFile.value = '';
   controlValue.value = '100%';
   imagePreview.style.transform = 'scale(1)';
+  imagePreview.className = '';
+  document.querySelector('.img-upload__effect-level').classList.add('hidden');
 
   openOverlay();
 });
@@ -182,4 +185,32 @@ controlBigger.addEventListener('click', function (evt) {
   evt.preventDefault();
 
   getScale(FLAG_PLUS);
+});
+
+// Переменные доя фильтров
+var previewClasses = ['effects__preview--none', 'effects__preview--chrome', 'effects__preview--sepia', 'effects__preview--marvin', 'effects__preview--phobos', 'effects__preview--heat'];
+
+var IMAGE_EFFECT = ['effect-none', 'effect-chrome', 'effect-sepia', 'effect-marvin', 'effect-phobos', 'effect-heat'];
+
+var imageUploadEffect = document.querySelector('.img-upload__effects');
+
+var getImageEffect = function (evt) {
+  var target = evt.target.parentNode;
+
+  for (var i = 0; i < IMAGE_EFFECT.length; i++) {
+    if (target.previousElementSibling && target.previousElementSibling.id === IMAGE_EFFECT[i]) {
+      if (target.previousElementSibling.id === IMAGE_EFFECT[0]) {
+        document.querySelector('.img-upload__effect-level').classList.add('hidden');
+      } else {
+        document.querySelector('.img-upload__effect-level').classList.remove('hidden');
+      }
+
+      imagePreview.className = '';
+      imagePreview.classList.add(previewClasses[i]);
+    }
+  }
+};
+
+imageUploadEffect.addEventListener('click', function (evt) {
+  getImageEffect(evt);
 });
