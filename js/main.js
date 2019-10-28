@@ -99,17 +99,16 @@ bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
 bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
 
 var preview = bigPicture.querySelector('.big-picture__preview');
-var listComments = bigPicture.querySelector('.social__comments');
-var itemComment = bigPicture.querySelector('.social__comment');
+// var listComments = bigPicture.querySelector('.social__comments');
+// var itemComment = bigPicture.querySelector('.social__comment');
 
-// Удаление встроенных комментариев 
-var deleteComments = function () {
-  var children = listComments.children
-  
-  for (var i = children.length - 1; i >= 0; i--) {
-    children[i].parentElement.removeChild(children[i]);
-  }
-};
+// Удаление встроенных комментариев
+// var deleteComments = function () {
+//   var children = listComments.children
+//   for (var i = children.length - 1; i >= 0; i--) {
+//     children[i].parentElement.removeChild(children[i]);
+//   }
+// };
 
 // Заполнение данных поста в полноэкранном режиме
 var renderBigPicture = function (obj) {
@@ -119,8 +118,8 @@ var renderBigPicture = function (obj) {
   picture.querySelector('.likes-count').textContent = obj.likes;
   picture.querySelector('.comments-count').textContent = obj.comments.length;
   picture.querySelector('.social__caption').textContent = obj.description;
-  picture.querySelector('.social__picture').alt = obj.comments[0].name;
-  picture.querySelector('.social__picture').src = obj.comments[0].avatar;
+  picture.querySelector('.social__comment img').alt = obj.comments[0].name;
+  picture.querySelector('.social__comment img').src = obj.comments[0].avatar;
   picture.querySelector('.social__text').textContent = obj.comments[0].message;
 
   return picture;
@@ -133,7 +132,6 @@ var renderBigPost = function (post) {
   for (var i = 0; i < post.length; i++) {
     fragment.appendChild(renderBigPicture(post[i]));
   }
-  
   return bigPicture.replaceChild(fragment, preview);
 };
 
