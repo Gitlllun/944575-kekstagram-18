@@ -29,20 +29,20 @@ var createNumber = function (min, max) {
 
 // Массив из сгенерированных объектов для описания фотографии
 var createPost = function (value) {
-  var post = [];
+  var posts = [];
 
   var POST_LIKES = createNumber(LIKES_MIN, LIKES_MAX);
   var POST_AVATARS = createNumber(AVATAR_MIN, AVATAR_MAX);
 
-  for (var i = 1; i <= value; i++) {
-    var urlPost = 'photos/' + i + '.jpg';
+  for (var i = 0; i < value; i++) {
+    var urlPost = 'photos/' + (i + 1) + '.jpg';
     var descriptionPost = getRandomElement(POST_DESCRIPTION);
     var likesPost = getRandomElement(POST_LIKES);
     var randomAvatars = getRandomElement(POST_AVATARS);
     var commentsPost = getRandomElement(USER_COMMENTS);
     var namesPost = getRandomElement(USER_NAMES);
 
-    post.push({
+    posts.push({
       url: urlPost,
       description: POST_DESCRIPTION[descriptionPost],
       likes: POST_LIKES[likesPost],
@@ -54,7 +54,7 @@ var createPost = function (value) {
     });
   }
 
-  return post;
+  return posts;
 };
 
 var pictureTemplate = document.querySelector('#picture')
@@ -85,54 +85,52 @@ var renderPost = function (post) {
   return picturePost.appendChild(fragment);
 };
 
-renderPost(createPost(USER_POSTS));
+var postsList = createPost(USER_POSTS);
+
+renderPost(postsList);
 
 // 6. ЛИЧНЫЙ ПРОЕКТ: БОЛЬШЕ ДЕТАЛЕЙ
 
-var FIRST_POST = 1;
-
-var bigPicture = document.querySelector('.big-picture');
-bigPicture.classList.remove('hidden');
+var bigPictureElement = document.querySelector('.big-picture');
+bigPictureElement.classList.remove('hidden');
 
 // Прячет блок счетчика комментариев и загрузки новых
-bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
-bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
+bigPictureElement.querySelector('.comments-loader').classList.add('visually-hidden');
+bigPictureElement.querySelector('.social__comment-count').classList.add('visually-hidden');
 
-var preview = bigPicture.querySelector('.big-picture__preview');
-// var listComments = bigPicture.querySelector('.social__comments');
-// var itemComment = bigPicture.querySelector('.social__comment');
+// Заполняет данными комментарий
+var getCommentMarkup = function (comment) {
+  var сommentElement = bigPictureElement.querySelector('.social__comment').cloneNode(true);
+  var commentAvatarElement = сommentElement.querySelector('.social__picture');
+  commentAvatarElement.src = comment.avatar;
+  commentAvatarElement.alt = comment.name;
+  сommentElement.querySelector('.social__text').textContent = comment.message;
 
-// Удаление встроенных комментариев
-// var deleteComments = function () {
-//   var children = listComments.children
-//   for (var i = children.length - 1; i >= 0; i--) {
-//     children[i].parentElement.removeChild(children[i]);
-//   }
-// };
-
-// Заполнение данных поста в полноэкранном режиме
-var renderBigPicture = function (obj) {
-  var picture = preview.cloneNode(true);
-
-  picture.querySelector('.big-picture__img img').src = obj.url;
-  picture.querySelector('.likes-count').textContent = obj.likes;
-  picture.querySelector('.comments-count').textContent = obj.comments.length;
-  picture.querySelector('.social__caption').textContent = obj.description;
-  picture.querySelector('.social__comment img').alt = obj.comments[0].name;
-  picture.querySelector('.social__comment img').src = obj.comments[0].avatar;
-  picture.querySelector('.social__text').textContent = obj.comments[0].message;
-
-  return picture;
+  return сommentElement;
 };
 
-// Генерация и отрисовка поста в полноэкранном режиме
-var renderBigPost = function (post) {
+// Создает фрагменты комментариев
+var getCommentsMarkup = function (picture) {
   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < post.length; i++) {
-    fragment.appendChild(renderBigPicture(post[i]));
+  for (var i = 0; i < picture.comments.length; i++) {
+    fragment.appendChild(getCommentMarkup(picture.comments[i]));
   }
-  return bigPicture.replaceChild(fragment, preview);
+
+  return fragment;
 };
 
-renderBigPost(createPost(FIRST_POST));
+// Заполнение данных и отрисовка
+var renderBigPicture = function (picture) {
+  var listComments = getCommentsMarkup(picture);
+  var commentsListElement = bigPictureElement.querySelector('.social__comments');
+
+  bigPictureElement.querySelector('.big-picture__img img').src = picture.url;
+  bigPictureElement.querySelector('.likes-count').textContent = picture.likes;
+  bigPictureElement.querySelector('.comments-count').textContent = picture.comments.length;
+  bigPictureElement.querySelector('.social__caption').textContent = picture.description;
+  commentsListElement.innerHTML = '';
+  commentsListElement.appendChild(listComments);
+};
+
+renderBigPicture(postsList[0]);
