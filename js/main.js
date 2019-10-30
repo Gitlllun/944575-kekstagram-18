@@ -92,7 +92,7 @@ renderPost(postsList);
 // 6. ЛИЧНЫЙ ПРОЕКТ: БОЛЬШЕ ДЕТАЛЕЙ
 
 var bigPictureElement = document.querySelector('.big-picture');
-bigPictureElement.classList.remove('hidden');
+// bigPictureElement.classList.remove('hidden');
 
 // Прячет блок счетчика комментариев и загрузки новых
 bigPictureElement.querySelector('.comments-loader').classList.add('visually-hidden');
@@ -134,3 +134,133 @@ var renderBigPicture = function (picture) {
 };
 
 renderBigPicture(postsList[0]);
+
+// 8. ЛИЧНЫЙ ПРОЕКТ: ПОДРОБНОСТИ
+
+var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
+
+var uploadFile = document.querySelector('#upload-file');
+var uploadOverlay = document.querySelector('.img-upload__overlay');
+var uploadClosed = uploadOverlay.querySelector('#upload-cancel');
+
+var onOverlayEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closeOverlay();
+  }
+};
+
+var openOverlay = function () {
+  uploadOverlay.classList.remove('hidden');
+  document.addEventListener('keydown', onOverlayEscPress);
+};
+
+var closeOverlay = function () {
+  uploadOverlay.classList.add('hidden');
+  document.removeEventListener('keydown', onOverlayEscPress);
+};
+
+// Сброс по умолчанию
+var getValueReset = function () {
+  document.querySelector('.img-upload__form').reset();
+  document.querySelector('.scale__control--value').value = '100%';
+  document.querySelector('.img-upload__preview img').style.transform = '';
+  document.querySelector('.img-upload__preview img').className = '';
+  document.querySelector('.img-upload__effect-level').classList.add('hidden');
+};
+
+// Открывает форму редактирования изображения
+uploadFile.addEventListener('change', function (evt) {
+  evt.preventDefault();
+  getValueReset();
+  openOverlay();
+});
+
+uploadFile.addEventListener('change', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    evt.preventDefault();
+    openOverlay();
+  }
+});
+
+// Закрывает форму редактирования изображения
+uploadClosed.addEventListener('click', function (evt) {
+  evt.preventDefault();
+  closeOverlay();
+});
+
+uploadClosed.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    evt.preventDefault();
+    closeOverlay();
+  }
+});
+
+// Константы масштабирования
+var SCALE_MAX = 100;
+var SCALE_MIN = 25;
+var SCALE_STEP = 25;
+var FLAG_MINUS = -1;
+var FLAG_PLUS = 1;
+
+var sectionPicture = document.querySelector('.pictures');
+var imagePreview = sectionPicture.querySelector('.img-upload__preview img');
+var scalePreview = sectionPicture.querySelector('.img-upload__scale');
+var controlSmaller = scalePreview.querySelector('.scale__control--smaller');
+var controlValue = scalePreview.querySelector('.scale__control--value');
+var controlBigger = scalePreview.querySelector('.scale__control--bigger');
+
+// Функция расчета масштабирования
+var getScale = function (number) {
+  var parseValue = parseFloat(controlValue.value);
+  var totalValue = parseValue + number * SCALE_STEP;
+
+  if (totalValue > SCALE_MAX) {
+    totalValue = SCALE_MAX;
+  } else if (totalValue < SCALE_MIN) {
+    totalValue = SCALE_MIN;
+  }
+
+  controlValue.value = totalValue + '%';
+  imagePreview.style.transform = 'scale(' + (totalValue / SCALE_MAX) + ')';
+};
+
+// Уменьшение масштаба
+controlSmaller.addEventListener('click', function (evt) {
+  evt.preventDefault();
+  getScale(FLAG_MINUS);
+});
+
+// Увеличение масштаба
+controlBigger.addEventListener('click', function (evt) {
+  evt.preventDefault();
+  getScale(FLAG_PLUS);
+});
+
+// Переменные доя фильтров
+var previewClasses = ['effects__preview--none', 'effects__preview--chrome', 'effects__preview--sepia', 'effects__preview--marvin', 'effects__preview--phobos', 'effects__preview--heat'];
+
+var IMAGE_EFFECT = ['effect-none', 'effect-chrome', 'effect-sepia', 'effect-marvin', 'effect-phobos', 'effect-heat'];
+
+var imageUploadEffect = document.querySelector('.img-upload__effects');
+
+var getImageEffect = function (evt) {
+  var target = evt.target.parentNode;
+
+  for (var i = 0; i < IMAGE_EFFECT.length; i++) {
+    if (target.previousElementSibling && target.previousElementSibling.id === IMAGE_EFFECT[i]) {
+      if (target.previousElementSibling.id === IMAGE_EFFECT[0]) {
+        document.querySelector('.img-upload__effect-level').classList.add('hidden');
+      } else {
+        document.querySelector('.img-upload__effect-level').classList.remove('hidden');
+      }
+
+      imagePreview.className = '';
+      imagePreview.classList.add(previewClasses[i]);
+    }
+  }
+};
+
+imageUploadEffect.addEventListener('click', function (evt) {
+  getImageEffect(evt);
+});
