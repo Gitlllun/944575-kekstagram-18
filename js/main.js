@@ -140,9 +140,11 @@ renderBigPicture(postsList[0]);
 var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
 
-var uploadFile = document.querySelector('#upload-file');
-var uploadOverlay = document.querySelector('.img-upload__overlay');
-var uploadClosed = uploadOverlay.querySelector('#upload-cancel');
+var uploadForm = document.querySelector('.img-upload__form');
+var uploadFile = uploadForm.querySelector('#upload-file');
+var uploadOverlay = uploadForm.querySelector('.img-upload__overlay');
+var uploadClosed = uploadForm.querySelector('#upload-cancel');
+var uploadEffectLevel = uploadForm.querySelector('.img-upload__effect-level');
 
 var onOverlayEscPress = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
@@ -153,26 +155,22 @@ var onOverlayEscPress = function (evt) {
 var openOverlay = function () {
   uploadOverlay.classList.remove('hidden');
   document.addEventListener('keydown', onOverlayEscPress);
+  uploadEffectLevel.classList.add('hidden');
+  controlValue.value = '100%';
 };
 
 var closeOverlay = function () {
   uploadOverlay.classList.add('hidden');
   document.removeEventListener('keydown', onOverlayEscPress);
-};
-
-// Сброс по умолчанию
-var getValueReset = function () {
-  document.querySelector('.img-upload__form').reset();
-  document.querySelector('.scale__control--value').value = '100%';
-  document.querySelector('.img-upload__preview img').style.transform = '';
-  document.querySelector('.img-upload__preview img').className = '';
-  document.querySelector('.img-upload__effect-level').classList.add('hidden');
+  imagePreview.style.transform = '';
+  imagePreview.className = '';
+  uploadFile.value = '';
+  uploadForm.reset();
 };
 
 // Открывает форму редактирования изображения
 uploadFile.addEventListener('change', function (evt) {
   evt.preventDefault();
-  getValueReset();
   openOverlay();
 });
 
@@ -237,22 +235,23 @@ controlBigger.addEventListener('click', function (evt) {
   getScale(FLAG_PLUS);
 });
 
-// Переменные доя фильтров
+// Переменные для фильтров
 var previewClasses = ['effects__preview--none', 'effects__preview--chrome', 'effects__preview--sepia', 'effects__preview--marvin', 'effects__preview--phobos', 'effects__preview--heat'];
 
 var IMAGE_EFFECT = ['effect-none', 'effect-chrome', 'effect-sepia', 'effect-marvin', 'effect-phobos', 'effect-heat'];
 
 var imageUploadEffect = document.querySelector('.img-upload__effects');
 
+// Подбор нужного эффекта
 var getImageEffect = function (evt) {
-  var target = evt.target.parentNode;
+  var target = evt.target;
 
   for (var i = 0; i < IMAGE_EFFECT.length; i++) {
-    if (target.previousElementSibling && target.previousElementSibling.id === IMAGE_EFFECT[i]) {
-      if (target.previousElementSibling.id === IMAGE_EFFECT[0]) {
-        document.querySelector('.img-upload__effect-level').classList.add('hidden');
+    if (target && target.id === IMAGE_EFFECT[i]) {
+      if (target.id === IMAGE_EFFECT[0]) {
+        uploadEffectLevel.classList.add('hidden');
       } else {
-        document.querySelector('.img-upload__effect-level').classList.remove('hidden');
+        uploadEffectLevel.classList.remove('hidden');
       }
 
       imagePreview.className = '';
@@ -261,6 +260,16 @@ var getImageEffect = function (evt) {
   }
 };
 
+// Выбор эффекта
 imageUploadEffect.addEventListener('click', function (evt) {
   getImageEffect(evt);
 });
+
+// Валидация хэштегов
+
+var bla = document.querySelector('.text__hashtags');
+
+var mm = bla.value;
+console.log(mm);
+var pp = bla.value.split(' ', 5);
+console.log(pp);
