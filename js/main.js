@@ -266,10 +266,67 @@ imageUploadEffect.addEventListener('click', function (evt) {
 });
 
 // Валидация хэштегов
+var inputHashtag = document.querySelector('.text__hashtags');
+var submitButton = document.querySelector('#upload-submit');
 
-var bla = document.querySelector('.text__hashtags');
+var HestagData = {
+  FIRST_SYMBOL: 0,
+  MAX_COUNT: 5,
+  MIN_LENGTH: 2,
+  MAX_LENGTH: 20,
+  VALID_POSITION: 1
+};
 
-var mm = bla.value;
-console.log(mm);
-var pp = bla.value.split(' ', 5);
-console.log(pp);
+var Message = {
+  HESTAG_START: 'Хэш-тег начинается с символа #',
+  HESTAG_MIN_SYMBOL: 'Хеш-тег не может состоять только из одной решётки',
+  HESTAG_SEPARATOR: 'Хэш-теги разделяются пробелами',
+  HESTAG_NO_REPEAT: 'Один и тот же хэш-тег не может быть использован дважды',
+  HESTAG_MAX_NUMBER: 'Хэштегов может быть максимум ',
+  HESTAG_MAX_LENGTH: 'Максимальная длина одного хэш-тега ',
+  HESTAG_VALUE_INCLUSIVE: ' имволов, включая решётку'
+};
+
+var getValidHashtag = function (hashtag) {
+  if (hashtag[HestagData.FIRST_SYMBOL] !== '#') {
+    inputHashtag.setCustomValidity(Message.HESTAG_START);
+    return false;
+  } else if (hashtag.length < HestagData.MIN_LENGTH) {
+    inputHashtag.setCustomValidity(Message.HESTAG_MIN_SYMBOL);
+    return false;
+  } else if (hashtag.length > HestagData.MAX_LENGTH) {
+    inputHashtag.setCustomValidity(Message.HESTAG_MAX_LENGTH + HestagData.MAX_LENGTH + Message.HESTAG_VALUE_INCLUSIVE);
+    return false;
+  } else if (hashtag.indexOf('#', HestagData.VALID_POSITION) > 0) {
+    inputHashtag.setCustomValidity(Message.HESTAG_SEPARATOR);
+    return false;
+  }
+  return true;
+};
+
+var onSubmitButtonClick = function () {
+  if (inputHashtag.value !== '') {
+    var hashtagArray = inputHashtag.value.toLowerCase().split(' ');
+    for (var i = 0; i < hashtagArray.length; i++) {
+      var isHashtagValid = getValidHashtag(hashtagArray[i]);
+      if (!isHashtagValid) {
+        break;
+      }
+      var positionNextHashtag = i + 1;
+      if (hashtagArray.indexOf(hashtagArray[i], positionNextHashtag) > 0) {
+        inputHashtag.setCustomValidity(Message.HESTAG_NO_REPEAT);
+        break;
+      }
+    }
+    if (hashtagArray.length > HestagData.MAX_COUNT) {
+      inputHashtag.setCustomValidity(Message.HESTAG_MAX_NUMBER + HestagData.MAX_COUNT);
+    }
+  }
+};
+
+var onInputInput = function () {
+  inputHashtag.setCustomValidity('');
+};
+
+submitButton.addEventListener('click', onSubmitButtonClick);
+inputHashtag.addEventListener('input', onInputInput);
